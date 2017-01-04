@@ -16,7 +16,12 @@ if(!window.JSON){
 }
 
 require('./src/hyphenate');
-},{"./src/hyphenate":5,"es5-shim":2,"jquery":3,"json3":4}],2:[function(require,module,exports){
+require('./src/reflow');
+require('./src/transform');
+require('./src/prefixFree');
+
+
+},{"./src/hyphenate":5,"./src/prefixFree":6,"./src/reflow":7,"./src/transform":8,"es5-shim":2,"jquery":3,"json3":4}],2:[function(require,module,exports){
 /*!
  * https://github.com/es-shims/es5-shim
  * @license es5-shim Copyright 2009-2015 by contributors, MIT License
@@ -14015,5 +14020,219 @@ $.hyphenate = function(str){
 		return '-' + $0.toLowerCase();
 	});
 };
+
+},{}],6:[function(require,module,exports){
+
+var PrefixFree;
+
+var $ = window.jQuery;
+
+var camelCase = $.camelCase;
+
+var hyphenate = $.hyphenate;
+
+(function(root, undefined){
+
+	if(!$){return;}
+
+	if(!window.getComputedStyle) {return;}
+
+	var getComputedStyle = window.getComputedStyle;
+
+	var self = {
+		prefixProperty: function(property, bCamelCase) {
+			var prefixed = self.prefix + property;
+			return bCamelCase ? camelCase(prefixed) : prefixed;
+		}
+	};
+
+	PrefixFree = self;
+
+	(function() {
+		var i, property,
+			prefixes = {},
+			highest = { prefix: '', uses: 0},
+			properties = [],
+			shorthands = {},
+			style = getComputedStyle(document.documentElement, null),
+			dummy = document.createElement('div').style;
+
+		// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
+		var iterate = function(property) {
+			pushUnique(properties, property);
+
+			if(property.indexOf('-') > -1) {
+				var parts = property.split('-');
+
+				if(property.charAt(0) === '-') {
+					var prefix = parts[1],
+						uses = ++prefixes[prefix] || 1;
+
+					prefixes[prefix] = uses;
+
+					if(highest.uses < uses) {
+						highest = {prefix: prefix, uses: uses};
+					}
+
+					// This helps determining shorthands
+					while(parts.length > 3) {
+						parts.pop();
+
+						var shorthand = parts.join('-'),
+							shorthandDOM = camelCase(shorthand);
+
+						if(shorthandDOM in dummy) {
+							pushUnique(properties, shorthand);
+						}
+					}
+				}
+			}
+		};
+
+		// Some browsers have numerical indices for the properties, some don't
+		if(style.length > 0) {
+			for(i = 0; i < style.length; i++) {
+				iterate(style[i]);
+			}
+		}
+		else {
+			for(property in style) {
+				iterate(hyphenate(property));
+			}
+		}
+
+		self.prefix = '-' + highest.prefix + '-';
+		self.Prefix = camelCase(self.prefix);
+
+		properties.sort();
+
+		self.properties = [];
+
+		// Get properties ONLY supported with a prefix
+		for(i=0; i<properties.length; i++){
+			property = properties[i];
+
+			if(property.charAt(0) !== '-') {
+				break; // it's sorted, so once we get to the first unprefixed property, we're done
+			}
+
+			if(property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
+				var unprefixed = property.slice(self.prefix.length);
+
+				if(!(camelCase(unprefixed) in dummy)) {
+					self.properties.push(unprefixed);
+				}
+			}
+		}
+
+		// IE fix
+		if(self.Prefix == 'Ms' &&
+			!('transform' in dummy) &&
+			!('MsTransform' in dummy) &&
+			('msTransform' in dummy)
+		){
+			self.properties.push('transform', 'transform-origin');
+		}
+
+		self.properties.sort();
+	})();
+
+	// Add class for current prefix
+	root.className += ' ' + self.prefix;
+
+	function pushUnique(arr, val) {
+		if(arr.indexOf(val) === -1) {
+			arr.push(val);
+		}
+	}
+
+})(document.documentElement);
+
+(function($){
+
+	if(!$){return;}
+	if(!PrefixFree){return;}
+
+	$.getPrefix = function(){
+		return PrefixFree.prefix;
+	};
+
+})(window.jQuery);
+
+
+},{}],7:[function(require,module,exports){
+var $ = window.jQuery;
+
+$.fn.reflow = function(){
+	var reflow = this.size() && this.get(0).clientLeft;
+	return this;
+};
+
+},{}],8:[function(require,module,exports){
+/**
+transform属性获取与设置
+
+@mixin lib/plugin/transform
+@param {String} property 要设置的 transform 属性
+@param {Object} property transform 键值对
+@param {String} value 要设置的 transform 值
+@returns transform属性值， transform字符串，或者undefined
+@example
+$('div').transform('translateX', '20px');
+$('div').transform({
+	'translateX' : '20px'
+});
+$('div').transform();	//'translateX(20px)'
+$('div').transform('translateX');	//'20px'
+**/
+
+var $ = window.jQuery;
+
+$.fn.transform = function(property, value){
+
+	var obj = {};
+	var style = $(this).get(0).style;
+	var transform = style.transform || style['-webkit-transform'] || '';
+	transform = transform === 'none' ? '' : transform;
+
+	transform = transform.replace(/,\s+/gi, ',');
+
+	$.each(transform.split(/\s+/gi), function(index, str){
+		if(!str){return;}
+		var name = str.match(/\w+/)[0];
+		var val = str.replace(name, '').replace(/[\(\)]/gi,'');
+		val = $.trim(val);
+		obj[name] = val;
+	});
+
+	if(!property){
+		return obj;
+	}
+
+	if(typeof property === 'string'){
+		if($.type(value) === 'undefined'){
+			return obj[property] || 0;
+		}else{
+			obj[property] = value;
+		}
+	}else{
+		$.extend(obj, property);
+	}
+
+	transform = [];
+	$.each(obj, function(key, val){
+		var str = key + '(' + val + ')';
+		transform.push(str);
+	});
+
+	if(transform.length){
+		transform = transform.join(' ');
+	}else{
+		transform = '';
+	}
+
+	return $(this).css('transform', transform);
+};
+
 
 },{}]},{},[1])

@@ -16,3 +16,6 @@ if(!window.JSON){
 
 require('./src/hyphenate');
 require('./src/reflow');
+require('./src/transform');
+require('./src/prefixFree');
+
