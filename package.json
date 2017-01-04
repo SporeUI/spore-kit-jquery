@@ -1,0 +1,28 @@
+{
+  "name": "spore-kit-jquery",
+  "version": "0.1.1",
+  "description": "spore-ui 所需的库文件，用于支持移动端开发",
+  "main": "jquery-lib.js",
+  "scripts": {
+    "test": "gulp && open ./test/test.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SporeUI/spore-kit-jquery.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SporeUI/spore-kit-jquery/issues"
+  },
+  "homepage": "https://github.com/SporeUI/spore-kit-jquery#readme",
+  "dependencies": {
+
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "mocha": "^3.2.0"
+  }
+}

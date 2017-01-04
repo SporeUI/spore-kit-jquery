@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mocha Test</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="test-area" style="display: none;">
+      <div class="demo-selector" >
+        <span>1</span><span>2</span>
+      </div>
+      <div class="demo-transform"></div>
+      <div class="demo-prefixfree"></div>
+    </div>
+    <div id="mocha"></div>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script>mocha.setup('bdd');</script>
+    <script src="../dist/jquery-lib.js"></script>
+    <script src="test.js"></script>
+    <script>
+      mocha.run();
+    </script>
+  </body>
+</html>
