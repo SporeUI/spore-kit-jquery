@@ -1,7 +1,7 @@
 {
   "name": "spore-kit-jquery",
-  "version": "0.1.1",
-  "description": "spore-ui 所需的库文件，用于支持移动端开发",
+  "version": "0.1.0",
+  "description": "spore-ui 所需的库文件，用于支持PC端开发",
   "main": "jquery-lib.js",
   "scripts": {
     "test": "gulp && open ./test/test.html"
@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/SporeUI/spore-kit-jquery#readme",
   "dependencies": {
-
+    "es5-shim": "^4.5.9",
+    "jquery": "^1.12.4",
+    "json3": "^3.3.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
