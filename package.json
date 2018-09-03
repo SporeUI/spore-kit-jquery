@@ -17,14 +17,14 @@
   },
   "homepage": "https://github.com/SporeUI/spore-kit-jquery#readme",
   "dependencies": {
-    "es5-shim": "^4.5.9",
-    "jquery": "^1.12.4",
-    "json3": "^3.3.2"
+    "es5-shim": "4.5.9",
+    "jquery": "1.12.4",
+    "json3": "3.3.2"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-browserify": "^0.5.1",
-    "mocha": "^3.2.0"
+    "chai": "3.5.0",
+    "gulp": "3.9.1",
+    "gulp-browserify": "0.5.1",
+    "mocha": "3.2.0"
   }
 }

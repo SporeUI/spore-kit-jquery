@@ -64,7 +64,7 @@ describe('extra', function() {
 
 	it('$.getPrefix', function() {
 		chai.expect($.getPrefix).to.be.an('function');
-		if(/webkit/i.test(navigator.userAgent)){
+		if (/webkit/i.test(navigator.userAgent)) {
 			chai.expect($.getPrefix()).to.equal('-webkit-');
 		}
 	});

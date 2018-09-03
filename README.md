@@ -1,9 +1,10 @@
 # spore-kit-jquery
+
 spore-ui 所需的库文件，用于支持移动端开发
 
 ## 特性
 
-#### 引入增强功能
+### 引入增强功能
 
 - JSON 如果window没有JSON, 使用json3进行解析
 - es5-shim 支持部分es5方法
@@ -15,7 +16,4 @@ spore-ui 所需的库文件，用于支持移动端开发
 
 ## Release History
 
- * 2017-01-04 v0.1.0 正式版发布
-
-
-
+- 2017-01-04 v0.1.0 正式版发布
